@@ -1,4 +1,9 @@
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
 
-# Create your views here.
-
+def register(request):
+    if request.method == 'POST':
+        return HttpResponse(request)
+        

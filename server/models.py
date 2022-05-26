@@ -1,27 +1,46 @@
 from enum import Enum
 from django.db import models 
-from mongoengine import StringField, ImageField, LongField, ListField, EnumField, IntField
 from django.urls import reverse
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
+class UserManager(BaseUserManager):
+    def create_user(self, email, password, display_name="Reader", profile_picture=None):
+        if not email:
+            raise ValueError("Email address must be set.")
+        if not password:
+            raise ValueError("Password must be set.")
+        
+        user = self.model(
+            display_name=display_name, 
+            email=self.normalize_email(email),
+            profile_picture=profile_picture,
+            experience=0
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        
+        return user
 
-class Goal(models.Model):
-    goal_name = StringField(required=True, max_length=16)
-    book_goal = IntField(required=True)
-    site_goal = IntField(required=True)
-    book_curr = IntField(required=True, default=0)
-    site_curr = IntField(required=True, default=0)
+    def create_superuser(self, email, password, display_name="Admin Reader", profile_picture=None):
+        user = self.create_user(email, password, display_name, profile_picture)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(using=self._db)
+        
+        return user
 
-class ItemType(Enum):
-    BOOK = 'book'
-    WEBSITE = 'website'
+class User(AbstractBaseUser, PermissionsMixin):
+    
+    display_name = models.CharField(max_length=16)
+    email = models.EmailField(unique=True, verbose_name="email address", max_length=255)
+    profile_picture = models.BinaryField()
 
-class ReadItem(models.Model):
-    item_type = EnumField(ItemType, required=True)
-    identifier = StringField(required=True)
+    # experience = LongField(required=True)
+    # goals = ListField(Goal())
+    # read_list = ListField(ReadItem())
 
-class UserData(models.Model):
-    display_name = StringField(required=True, max_length=16)
-    profile_picture = ImageField(size=(1000,1000,True))
-    experience = LongField(required=True)
-    goals = ListField(Goal())
-    read_list = ListField(ReadItem())
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['display_name', 'experience']
+
+    objects = UserManager()
+    
