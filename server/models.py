@@ -1,6 +1,6 @@
 from email.policy import default
 from enum import Enum
-import psycopg2
+from django.utils import timezone
 from django.db import models
 from django.forms import IntegerField 
 from django.urls import reverse
@@ -16,7 +16,6 @@ class UserManager(BaseUserManager):
         user = self.model(
             display_name=display_name, 
             email=self.normalize_email(email),
-            profile_picture=profile_picture,
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -32,11 +31,11 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser, PermissionsMixin):
-    
     display_name = models.CharField(max_length=16)
     email = models.EmailField(unique=True, verbose_name="email address", max_length=255)
-    profile_picture = models.BinaryField(default=bytes(0))
-
+    # profile_picture = models.BinaryField(default=bytes(0))
+    created = models.DateField(default=timezone.now)
+    updated = models.DateField(default=timezone.now)
     experience = models.IntegerField(default=0)
     # goals = ListField(Goal())
     # read_list = ListField(ReadItem())
