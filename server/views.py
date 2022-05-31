@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from .serializers import UserSerializer
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from rest_framework.authentication import authenticate
-
+from rest_framework.authentication import authenticate, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 class RegisterView(APIView):
     def post(self, request):
@@ -39,3 +39,14 @@ class LoginView(APIView):
         print(user)
         token, _ = Token.objects.get_or_create(user=user)
         return Response({'token': token.key})
+
+class UserView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, user_id):
+        user = request.user
+        if user.id != user_id:
+            return Response("You don't have access to this information.", status=400)
+
+        return Response({ user })
