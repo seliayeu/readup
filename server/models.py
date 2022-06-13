@@ -39,6 +39,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     created = models.DateField(default=timezone.now)
     updated = models.DateField(default=timezone.now)
     experience = models.IntegerField(default=0)
+    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['display_name']
@@ -51,7 +52,8 @@ class ReadItem(models.Model):
         WEBSITE = 'WB', _("Website")
 
     item_type = models.CharField(max_length=2, choices=ItemType.choices)
-    address = models.CharField()
+    address = models.CharField(max_length=100)
+    created = models.DateTimeField(default=timezone.now)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -77,5 +79,6 @@ class Goal(models.Model):
     website_count = models.IntegerField()
     book_goal = models.IntegerField()
     book_count = models.IntegerField()
+    created = models.DateTimeField(default=timezone.now)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)

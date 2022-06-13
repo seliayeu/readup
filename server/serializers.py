@@ -1,4 +1,4 @@
-from .models import User, UserManager
+from server.models import Goal, ReadItem, User
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 
@@ -16,3 +16,26 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
+
+class ReadItemSerializer(serializers.ModelSerializer):
+    item_type = serializers.ChoiceField([("BK", "Book"), ("WB", "Website")])
+    address = serializers.CharField(max_length=100)
+    user = serializers.ReadOnlyField(source="user.id")
+    created = serializers.DateTimeField()
+
+    class Meta:
+        model = ReadItem 
+        fields = ('item_type','address','user','created')
+
+
+class GoalSerializer(serializers.ModelSerializer):
+    website_goal = serializers.IntegerField()
+    website_count = serializers.IntegerField()
+    book_goal = serializers.IntegerField()
+    book_count = serializers.IntegerField()
+    user = serializers.ReadOnlyField(source="user.id")
+    created = serializers.DateTimeField()
+
+    class Meta:
+        model = Goal
+        fields = ['website_goal','website_count','book_goal', 'book_count', 'user', 'created']

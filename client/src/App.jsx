@@ -26,22 +26,18 @@ const AuthProvider = ({ children }) => {
   const [ user, setUser ] = useState()
 
   useEffect(() => {
-    if (localStorage.getItem("token") && localStorage.getItem("user")) {
-      setUser(localStorage.getItem("user"))
+    if (localStorage.getItem("token") && localStorage.getItem("email")) {
+      setUser(localStorage.getItem("email"))
     }
   }, [])
 
 
-  const login = (user, callback) => (
-    authServices.login(user, () => {
-      setUser(user)
-      callback()
-    })
+  const login = (user) => (
+    setUser(user)
   )
 
-  const logout = (user, callback) => {
+  const logout = (user) => {
     setUser(null)
-    callback()
   }
 
   const value = { user, login, logout }
