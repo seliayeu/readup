@@ -8,6 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password', 'placeholder': 'Password'})
     created = serializers.DateField(required=False)
     updated = serializers.DateField(required=False)
+    id = serializers.ReadOnlyField()
 
     class Meta:
         model = User
@@ -22,10 +23,11 @@ class ReadItemSerializer(serializers.ModelSerializer):
     address = serializers.CharField(max_length=100)
     user = serializers.ReadOnlyField(source="user.id")
     created = serializers.DateTimeField()
+    id = serializers.ReadOnlyField()
 
     class Meta:
         model = ReadItem 
-        fields = ('item_type','address','user','created')
+        fields = ('id', 'item_type','address','user','created')
 
 
 class GoalSerializer(serializers.ModelSerializer):
@@ -35,7 +37,8 @@ class GoalSerializer(serializers.ModelSerializer):
     book_count = serializers.IntegerField()
     user = serializers.ReadOnlyField(source="user.id")
     created = serializers.DateTimeField()
+    id = serializers.ReadOnlyField()
 
     class Meta:
         model = Goal
-        fields = ['website_goal','website_count','book_goal', 'book_count', 'user', 'created']
+        fields = ['id', 'website_goal','website_count','book_goal', 'book_count', 'user', 'created']
