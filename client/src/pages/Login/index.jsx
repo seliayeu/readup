@@ -2,8 +2,9 @@ import { useContext } from "react"
 import { AuthContext } from "../../authContext"
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Button, TextField } from "@mui/material";
+import { Button, Stack, TextField } from "@mui/material";
 import authServices from "../../services/authService";
+import { Box } from "@mui/system";
 
 
 const Login = () => {
@@ -37,35 +38,35 @@ const Login = () => {
   })
 
   return(
-    <div>
-      <form onSubmit={formik.handleSubmit}>
-        <TextField
-          label="Email"
-          id="outlined-basic"
-          name="email"
-          type="text"
-          error={formik.touched.email ? formik.errors.email !== undefined : false}
-          helperText={formik.touched.email ? formik.errors.email : ""}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.email}
-        />
-        <TextField
-          label="Password"
-          id="outlined-adornment-password"
-          name="password"
-          type="password"
-          error={formik.touched.password ? formik.errors.password !== undefined : false}
-          helperText={formik.touched.password ? formik.errors.password : ""}
-          onChange={formik.handleChange}
-          onBlur={formik.handleBlur}
-          value={formik.values.passwrod}
-        />
-        <Button variant="contained" type="submit">Submit</Button>
-      </form>
- 
-    </div>     
-
+    <form onSubmit={formik.handleSubmit}>
+      <Box sx={{ width: '100%', justifyContent: "center" }}>
+        <Stack sx={{ width: "400px", margin: "auto", marginTop: "5%" }} spacing={2}>
+          <TextField
+            label="Email"
+            id="outlined-basic"
+            name="email"
+            type="text"
+            error={formik.touched.email ? formik.errors.email !== undefined : false}
+            helperText={formik.touched.email ? formik.errors.email : ""}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.email}
+          />
+          <TextField
+            label="Password"
+            id="outlined-adornment-password"
+            name="password"
+            type="password"
+            error={formik.touched.password ? formik.errors.password !== undefined : false}
+            helperText={formik.touched.password ? formik.errors.password : ""}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.passwrod}
+          />
+          <Button variant="contained" type="submit" sx={{height: "50px", marginTop: "0", textTransform: "none", fontWeight: "bold"}}>Login</Button>
+        </Stack>
+      </Box>     
+    </form>
   )
 }
 

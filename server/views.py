@@ -54,7 +54,24 @@ class UserView(APIView):
         if user.id != user_id:
             return Response("You don't have access to this information.", status=400)
 
-        return Response({ user })
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data, status=200)
+
+    def put(self, request, user_id):
+        user = request.user
+        if user.id != user_id:
+            return Response("You don't have access to this information.", status=400)
+
+        user_instance = User.objects.get(pk=user.id)
+        serializer = UserSerializer(user_instance, data=request.data, partial=True)
+        serializer.is_valid()
+        print(serializer.errors)
+        serializer.save()
+
+        return Response(serializer.data, status=200)
+
+
 
 class BooksView(APIView):
     authentication_classes = [TokenAuthentication]

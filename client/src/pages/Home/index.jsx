@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import goalsService from "../../services/goalsService"
 import booksService from "../../services/booksService"
+import Navbar from "../../components/Navbar"
 
 const Home = () => {
   const [goals, setGoals] = useState([])
@@ -23,6 +24,7 @@ const Home = () => {
 
   return(
     <div>
+      <Navbar />
       <div>
         {goals.map(goal =>
           <div key={`${goal.id}`}>

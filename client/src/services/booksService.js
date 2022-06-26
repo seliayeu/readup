@@ -40,6 +40,19 @@ const deleteBook = async (bookId, userId, token, callback) => {
   return response.status
 }
 
-const booksService = { getBooks, getBook, deleteBook }
+const createBook = async (bookId, userId, token, newBook, callback) => {
+  const response = await axios.put(`${baseUrl}/${userId}/books/${bookId}`, newBook,  {
+    headers: {
+      "Authorization": `Token ${token}`
+    }
+  })
+  console.log(response)
+  if (response.status === 204) {
+    callback(response.data)
+  }
+  return response.status
+}
+
+const booksService = { getBooks, getBook, deleteBook, createBook }
 
 export default booksService 

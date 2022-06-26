@@ -40,6 +40,19 @@ const deleteGoal = async (goalId, userId, token, callback) => {
   return response.status
 }
 
-const goalsService = { getGoals, getGoal, deleteGoal }
+const createGoal = async (goalId, userId, token, newGoal, callback) => {
+  const response = await axios.put(`${baseUrl}/${userId}/goals/${goalId}`, newGoal,  {
+    headers: {
+      "Authorization": `Token ${token}`
+    }
+  })
+  console.log(response)
+  if (response.status === 204) {
+    callback(response.data)
+  }
+  return response.status
+}
+
+const goalsService = { getGoals, getGoal, deleteGoal, createGoal }
 
 export default goalsService
