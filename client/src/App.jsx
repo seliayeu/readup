@@ -1,7 +1,6 @@
 import './App.css';
 import { Routes, Route } from "react-router-dom";
 import { useContext, useEffect, useState } from 'react';
-import Landing from './pages/Landing/index'
 import Login from './pages/Login/index'
 import Home from './pages/Home/index'
 import Register from './pages/Register/index'
@@ -13,7 +12,7 @@ const App = () => {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<AuthRestricted alt="/home"><Landing /></AuthRestricted>} />
+        <Route path="/" element={<AuthRestricted alt="/home"><Login /></AuthRestricted>} />
         <Route path="/home" element={<AuthRequired alt="/login"><Home /></AuthRequired>} />
         <Route path="login" element={<AuthRestricted alt="/home"><Login /></AuthRestricted>} />
         <Route path="register" element={<AuthRestricted alt="/home"><Register /></AuthRestricted>} />

@@ -1,6 +1,6 @@
-from server.models import Goal, ReadItem, User
+from server.models import Book, Goal, User
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
+from django.utils import timezone
 
 class UserSerializer(serializers.ModelSerializer):
     display_name = serializers.CharField(default="Reader")
@@ -18,27 +18,32 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return User.objects.create_user(**validated_data)
 
-class ReadItemSerializer(serializers.ModelSerializer):
-    item_type = serializers.ChoiceField([("BK", "Book"), ("WB", "Website")])
-    address = serializers.CharField(max_length=100)
+class BookSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(max_length=100)
+    author = serializers.CharField(max_length=100)
+    thumbnail_link = serializers.URLField(max_length=200)
     user = serializers.ReadOnlyField(source="user.id")
-    created = serializers.DateTimeField()
+    created = serializers.DateTimeField(required=False)
+    isbn = serializers.CharField(max_length=100)
     id = serializers.ReadOnlyField()
 
     class Meta:
-        model = ReadItem 
-        fields = ('id', 'item_type','address','user','created')
+        model = Book 
+        fields = ('id', 'isbn', 'title', 'author', 'user','created', 'thumbnail_link')
+    
+    def create(self, validated_data):
+        validated_data["created"] = timezone.now()
+        print(validated_data.user)
+        return Book.objects.create(**validated_data)
 
 
 class GoalSerializer(serializers.ModelSerializer):
-    website_goal = serializers.IntegerField()
-    website_count = serializers.IntegerField()
-    book_goal = serializers.IntegerField()
-    book_count = serializers.IntegerField()
+    goal = serializers.IntegerField()
+    count = serializers.IntegerField()
     user = serializers.ReadOnlyField(source="user.id")
     created = serializers.DateTimeField()
     id = serializers.ReadOnlyField()
 
     class Meta:
         model = Goal
-        fields = ['id', 'website_goal','website_count','book_goal', 'book_count', 'user', 'created']
+        fields = ['id', 'goal', 'count', 'user', 'created']

@@ -46,39 +46,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
     
-class ReadItem(models.Model):
-    class ItemType(models.TextChoices):
-        BOOK = 'BK', _("Book")
-        WEBSITE = 'WB', _("Website")
-
-    item_type = models.CharField(max_length=2, choices=ItemType.choices)
-    address = models.CharField(max_length=100)
+class Book(models.Model):
+    isbn = models.CharField(max_length=100)
     created = models.DateTimeField(default=timezone.now)
-
+    title = models.CharField(max_length=100)
+    author = models.CharField(max_length=100)
+    thumbnail_link = models.URLField(max_length=200)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def is_valid_isbn10(self, isbn):
-        isbn = isbn.replace("-", "")
-
-        if len(isbn) != 10: return False
-        if not (isbn[:9].isnumeric() and isbn[9] == "X" or isbn[9].isnumeric()):
-            return False
-
-        res = 0
-
-        for i in range(9):
-            res += int(isbn[i]) * (10 - i)
-        res += 10 if isbn[9] == "X" else int(isbn[9])
-        return (res % 11) == 0
-
-    def is_valid_url(self, url):
-        return validators.url(url) is True
-
 class Goal(models.Model):
-    website_goal = models.IntegerField()
-    website_count = models.IntegerField()
-    book_goal = models.IntegerField()
-    book_count = models.IntegerField()
+    goal = models.IntegerField()
+    count = models.IntegerField()
     created = models.DateTimeField(default=timezone.now)
-
     user = models.ForeignKey(User, on_delete=models.CASCADE)

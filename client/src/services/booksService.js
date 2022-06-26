@@ -1,8 +1,8 @@
 import axios from 'axios'
 const baseUrl = '/api/users'
 
-const getItems = async (userId, token, callback) => {
-  const response = await axios.get(`${baseUrl}/${userId}/items/`, {
+const getBooks = async (userId, token, callback) => {
+  const response = await axios.get(`${baseUrl}/${userId}/books/`, {
     headers: {
       "Authorization": `Token ${token}`
     }
@@ -14,8 +14,8 @@ const getItems = async (userId, token, callback) => {
   return response.data
 }
 
-const getItem = async (itemId, userId, token, callback) => {
-  const response = await axios.get(`${baseUrl}/${userId}/items/${itemId}/`, {
+const getBook = async (bookId, userId, token, callback) => {
+  const response = await axios.get(`${baseUrl}/${userId}/books/${bookId}/`, {
     headers: {
       "Authorization": `Token ${token}`
     }
@@ -27,8 +27,8 @@ const getItem = async (itemId, userId, token, callback) => {
   return response.data
 }
 
-const deleteItem = async (itemId, userId, token, callback) => {
-  const response = await axios.delete(`${baseUrl}/${userId}/items/${itemId}/`, {
+const deleteBook = async (bookId, userId, token, callback) => {
+  const response = await axios.delete(`${baseUrl}/${userId}/books/${bookId}/`, {
     headers: {
       "Authorization": `Token ${token}`
     }
@@ -40,6 +40,6 @@ const deleteItem = async (itemId, userId, token, callback) => {
   return response.status
 }
 
-const itemsService = { getItems, getItem, deleteItem }
+const booksService = { getBooks, getBook, deleteBook }
 
-export default itemsService
+export default booksService 

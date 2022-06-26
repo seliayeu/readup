@@ -2,6 +2,7 @@ import { useContext } from "react"
 import { AuthContext } from "../../authContext"
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { Button, TextField } from "@mui/material";
 import authServices from "../../services/authService";
 
 
@@ -38,33 +39,29 @@ const Login = () => {
   return(
     <div>
       <form onSubmit={formik.handleSubmit}>
-        <label htmlFor="email">Email</label>
-        <input 
-          id="email"
+        <TextField
+          label="Email"
+          id="outlined-basic"
           name="email"
           type="text"
+          error={formik.touched.email ? formik.errors.email !== undefined : false}
+          helperText={formik.touched.email ? formik.errors.email : ""}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.email}
         />
-        {formik.touched.email && formik.errors.email ? (
-          <div>{formik.errors.email}</div>
-        ) : null}
-
-        <label htmlFor="password">Password</label>
-        <input 
-          id="password"
+        <TextField
+          label="Password"
+          id="outlined-adornment-password"
           name="password"
           type="password"
+          error={formik.touched.password ? formik.errors.password !== undefined : false}
+          helperText={formik.touched.password ? formik.errors.password : ""}
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.passwrod}
         />
-        {formik.touched.password && formik.errors.password ? (
-          <div>{formik.errors.password}</div>
-        ) : null}
-
-        <button type="submit">Submit</button>
+        <Button variant="contained" type="submit">Submit</Button>
       </form>
  
     </div>     
