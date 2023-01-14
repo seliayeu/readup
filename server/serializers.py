@@ -3,7 +3,6 @@ from rest_framework import serializers
 from django.utils import timezone
 
 class UserSerializer(serializers.ModelSerializer):
-    display_name = serializers.CharField(default="Reader")
     email = serializers.CharField()
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password', 'placeholder': 'Password'})
     created = serializers.DateField(required=False)
@@ -12,7 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'display_name', 'email', 'created', 'experience', 'updated', 'password']
+        fields = ['id', 'email', 'created', 'experience', 'updated', 'password']
         read_only_field = ['created', 'updated']
 
     def create(self, validated_data):

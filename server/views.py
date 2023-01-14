@@ -15,9 +15,10 @@ class RegisterView(APIView):
     def post(self, request):
         email = request.data["email"]
         password = request.data["password"]
+
         if not email or not password:
             return Response("Email or password missing.", status=400)
-
+        print(request.data)
         serializer = UserSerializer(data=request.data, context=request)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
@@ -92,18 +93,17 @@ class BooksView(APIView):
         data = json.loads(request.body)
         book_resp = requests.get("https://www.googleapis.com/books/v1/volumes?q=isbn:" + str(data["isbn"]) + "&key=" + config("API_KEY"))
         book_data = book_resp.json()["items"][0]["volumeInfo"]
-
         book = Book()
         book.isbn = str(data["isbn"])
         book.author = book_data["authors"][0]
         book.title = book_data["title"]
-        book.thumbnail_link = book_data["imageLinks"]["thumbnail"]
+        book.thumbnail_link = book_data["imageLinks"]["thumbnail"] if "imageLinks" in book_data else ""
         book.created = timezone.now()
         book.user = User.objects.get(pk=user.id)
         
         book.save()
-
-        return Response("Successfully added book to the database.", status=200)
+        serializer = BookSerializer(book)
+        return Response(serializer.data, status=200)
 
 
 

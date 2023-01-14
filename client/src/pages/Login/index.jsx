@@ -5,10 +5,12 @@ import * as Yup from 'yup';
 import { Button, Stack, TextField } from "@mui/material";
 import authServices from "../../services/authService";
 import { Box } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 
 
 const Login = () => {
   const auth = useContext(AuthContext)
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -39,8 +41,12 @@ const Login = () => {
 
   return(
     <form onSubmit={formik.handleSubmit}>
-      <Box sx={{ width: '100%', justifyContent: "center" }}>
-        <Stack sx={{ width: "400px", margin: "auto", marginTop: "5%" }} spacing={2}>
+      <Box sx={{ justifyContent: "center", display: "flex", alignItems: "center" }}>
+        <Stack sx={{ maxWidth: "400px", width: "90%", margin: "auto", marginTop: "5%" }} spacing={2}>
+          <div style={{ display: "flex", alignItems: "row" }}>
+            <h1 style={{ marginRight: "5%", color: "#1565c0" }}>Login</h1>
+            <h1 style={{ cursor: "pointer" }} onClick={() => {navigate("/register");}}>Register</h1>
+          </div>
           <TextField
             label="Email"
             id="outlined-basic"

@@ -1,12 +1,11 @@
-import './App.css';
 import { Routes, Route } from "react-router-dom";
-import { useContext, useEffect, useState } from 'react';
 import Login from './pages/Login/index'
 import Home from './pages/Home/index'
 import Register from './pages/Register/index'
-import { AuthContext } from './authContext'
-import { Navigate, useLocation } from 'react-router';
-import authServices from './services/authService';
+import AuthProvider from "./components/AuthProvider/index";
+import AuthRestricted from "./components/AuthRestricted/index";
+import AuthRequired from "./components/AuthRequired/index";
+import styled, { css } from 'styled-components'
 
 const App = () => {
   return (
@@ -19,52 +18,6 @@ const App = () => {
       </Routes>
   </AuthProvider>
   );
-}
-
-const AuthProvider = ({ children }) => {
-  const [ user, setUser ] = useState()
-
-  useEffect(() => {
-    if (localStorage.getItem("token") && localStorage.getItem("email")) {
-      setUser(localStorage.getItem("email"))
-    }
-  }, [])
-
-
-  const login = (user) => (
-    setUser(user)
-  )
-
-  const logout = (user) => {
-    setUser(null)
-  }
-
-  const value = { user, login, logout }
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-const AuthRequired = ({ alt, children }) => {
-  const auth = useContext(AuthContext)
-  const location = useLocation()
-
-  if (!auth.user) {
-    return <Navigate to={`${alt}`} state={location} replace />
-  }
-
-  return children
-}
-
-const AuthRestricted = ({ alt, children }) => {
-  const auth = useContext(AuthContext) 
-  const location = useLocation()
-
-  if (auth.user && auth.user !== {}) {
-    console.log(auth.user)
-    return <Navigate to={`${alt}`} state={location} replace />
-  }
-
-  return children
 }
 
 export default App;

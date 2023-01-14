@@ -40,14 +40,14 @@ const deleteBook = async (bookId, userId, token, callback) => {
   return response.status
 }
 
-const createBook = async (bookId, userId, token, newBook, callback) => {
-  const response = await axios.put(`${baseUrl}/${userId}/books/${bookId}`, newBook,  {
+const createBook = async (ISBN, userId, token, callback) => {
+  const response = await axios.post(`${baseUrl}/${userId}/books/`, { "isbn": ISBN },  {
     headers: {
       "Authorization": `Token ${token}`
     }
   })
   console.log(response)
-  if (response.status === 204) {
+  if (response.status === 200) {
     callback(response.data)
   }
   return response.status
