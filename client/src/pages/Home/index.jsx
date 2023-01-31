@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Button, Card, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent, Stack, TextField, useMediaQuery } from "@mui/material";
+import { Button, Card, Grid, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent, Stack, TextField, useMediaQuery, Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { Box } from "@mui/system";
 import goalsService from "../../services/goalsService"
@@ -7,6 +7,7 @@ import userService from "../../services/userService"
 import booksService from "../../services/booksService"
 import { useContext } from "react"
 import { AuthContext } from "../../authContext"
+import CardMedia from '@mui/material/CardMedia';
 
 const Home = () => {
   const auth = useContext(AuthContext)
@@ -14,6 +15,8 @@ const Home = () => {
   const [goals, setGoals] = useState([])
   const [books, setBooks] = useState([])
   const [addBookOpen, setAddBookOpen] = useState(false)
+  const [viewBookOpen, setViewBookOpen] = useState(false)
+  const [viewBook, setViewBook] = useState({})
   const [currISBN, setCurrISBN] = useState("")
   const handleClose = () => setAddBookOpen(false);
   const handleOpen = () => setAddBookOpen(true);
@@ -49,6 +52,12 @@ const Home = () => {
   const handleRemoveBook = (id) => {
     booksService.deleteBook(id, localStorage.getItem("id"), auth.user.token, () => {})
     setBooks(books.filter(b => b.id !== id))
+    setViewBookOpen(false);
+  }
+
+  const handleOpenBook = (book) => {
+    setViewBook(book);
+    setViewBookOpen(true);
   }
 
   return(
@@ -74,15 +83,57 @@ const Home = () => {
           <Button onClick={handleAddBook}>Add</Button>
         </DialogActions>
       </Dialog>
+      <Dialog fullWidth open={viewBookOpen} onClose={()=>{setViewBookOpen(false)}} sx={{position: "absolute" }}>
+        <DialogTitle>{viewBook.title}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Enter book ISBN to add a book!</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={()=>{setViewBookOpen(false)}}>Cancel</Button>
+          <Button onClick={() => {handleRemoveBook(viewBook.id)}}>Delete</Button>
+        </DialogActions>
+      </Dialog>
+
       <Box sx={{width: "90%", maxWidth: "700px", marginTop: "2%"}}>
       <h1>readup</h1>
-      <Box sx={{ width: "100%", minHeight: "18vh", backgroundColor: "lightgrey", borderRadius: "8px"}} p={"2%"}>
+      <Grid 
+        sx={{ width: "100%", minHeight: "18vh", backgroundColor: "lightgrey", borderRadius: "8px", display: "flex", flexDirection: "row", flexGrow: 1}} 
+        p={"2%"}
+        pr={"4%"}
+        container spacing={1}
+        >
+          <Grid
+          item xs={matches ? 2.3 : 3}>
         <Card 
-          sx={{ minHeight: "18vh", maxWidth: matches ? "18%" : "12vh", cursor: "pointer", justifyContent: "center", display: "flex", alignItems: "center"}}
+          sx={{ minHeight: matches ? "17.6vh" : "15.5vh", minWidth: matches ? "100%" : "11vh", maxWidth: matches ? "18%" : "11vh", cursor: "pointer", justifyContent: "center", display: "flex", alignItems: "center" }}
           onClick={handleOpen}
         >
           <AddIcon sx={{ width: "30%", height: "30%"}}/>
-        </Card>
+        </Card></Grid>
+        {books.map(book =>
+          <Grid
+          item xs={matches ? 2.3 : 3}>
+          <Card key={`${book.id}`}
+            sx={{ minHeight: matches ? "17.6vh" : "15.5vh", minWidth: matches ? "100%" : "11vh", maxWidth: matches ? "18%" : "11vh", cursor: "pointer", justifyContent: "center", display: "flex", alignItems: "center" }}
+            onClick={() => handleOpenBook(book)}
+          >{
+              book.thumbnail_link ? 
+                <CardMedia
+                component="img"
+                sx={{ width: "100%" }}
+                image={book.thumbnail_link}
+                alt={book.title.substring(0, 4) + "..."}
+                ></CardMedia>
+                :
+                <Typography>{book.title.substring(0, 4) + "..."}</Typography>
+            }
+            {/* <button onClick={() => handleRemoveBook(book.id)}>
+              delete
+            </button> */}
+        </Card></Grid>)
+        }
+      </Grid>
+      <div>
         {goals.map(goal =>
           <div key={`${goal.id}`}>
             books {goal.goal}/{goal.count}  
@@ -98,17 +149,8 @@ const Home = () => {
           </div>
         )
         }
-      </Box>
-      <div>
-        {books.map(book =>
-          <div key={`${book.id}`}>
-            {book.title}
-            <button onClick={() => handleRemoveBook(book.id)}>
-              delete
-            </button>
-          </div>)
-        }
       </div>
+
       </Box>
     </Box>     
   )
