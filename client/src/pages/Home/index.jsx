@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Button, Card, Grid, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent, Stack, TextField, useMediaQuery, Typography } from "@mui/material";
+import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
 import AddIcon from '@mui/icons-material/Add';
 import { Box } from "@mui/system";
 import goalsService from "../../services/goalsService"

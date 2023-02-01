@@ -56,6 +56,7 @@ class UserView(APIView):
             return Response("You don't have access to this information.", status=400)
 
         serializer = UserSerializer(user)
+        User.objects.filter(pk=user_id).update(experience=user.experience + 10)
 
         return Response(serializer.data, status=200)
 
@@ -71,6 +72,16 @@ class UserView(APIView):
         serializer.save()
 
         return Response(serializer.data, status=200)
+
+    def post(self, request, user_id):
+        user = request.user
+        if user.id != user_id:
+            return Response("You cannot complete this action.", status=400)
+
+        data = json.loads(request.body)
+        Book.objects.filter(user__pk=user_id, pk=data["book"].id).delete()
+        
+        return Response("Successfully completed the book for the user.", status=200)
 
 
 
