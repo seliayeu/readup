@@ -7,6 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password', 'placeholder': 'Password'})
     created = serializers.DateField(required=False)
     updated = serializers.DateField(required=False)
+    experience = serializers.IntegerField(required=False)
     id = serializers.ReadOnlyField()
 
     class Meta:

@@ -27,6 +27,19 @@ const updateUser = async (userId, token, updatedUser, callback) => {
   return response.status
 }
 
-const  userService = { getUser, updateUser }
+const finishBookUser = async (userId, token, book_id, callback) => {
+  const response = await axios.post(`${baseUrl}/${userId}/`, { book_id },  {
+    headers: {
+      "Authorization": `Token ${token}`
+    }
+  })
+  console.log(response)
+  if (response.status === 200) {
+    callback(response.data)
+  }
+  return response.status
+}
+
+const  userService = { getUser, updateUser, finishBookUser }
 
 export default userService 

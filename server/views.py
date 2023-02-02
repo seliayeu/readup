@@ -22,18 +22,16 @@ class RegisterView(APIView):
         serializer = UserSerializer(data=request.data, context=request)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-
+        User.objects.filter(pk=user.id).update(experience=0)
         Token.objects.create(user=user)
-
+        serializer = UserSerializer(User.objects.get(pk=user.id))
         #return Response(reverse("/"))
         return Response(status=200)
 
 class LoginView(APIView):
     def post(self, request):
-        print(request)
         serializer = UserSerializer(data=request.data, context=request)
         serializer.is_valid(raise_exception=True)
-        print(serializer.data)
         try:
             email = request.data["email"]
             password = request.data["password"]
@@ -42,9 +40,9 @@ class LoginView(APIView):
         if not email or not password:
             return Response("Email or password missing.", status=400)
         user = authenticate(email=email, password=password)
-        print(user)
+        serializer = UserSerializer(User.objects.get(pk=user.id))
         token, _ = Token.objects.get_or_create(user=user)
-        return Response({'token': token.key, 'id': user.id })
+        return Response({'token': token.key, 'id': user.id, "user": { **serializer.data } })
 
 class UserView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -55,8 +53,7 @@ class UserView(APIView):
         if user.id != user_id:
             return Response("You don't have access to this information.", status=400)
 
-        serializer = UserSerializer(user)
-        User.objects.filter(pk=user_id).update(experience=user.experience + 10)
+        serializer = UserSerializer(User.objects.get(pk=user.id))
 
         return Response(serializer.data, status=200)
 
@@ -78,8 +75,10 @@ class UserView(APIView):
         if user.id != user_id:
             return Response("You cannot complete this action.", status=400)
 
+        user_instance = User.objects.get(pk=user.id)
+        User.objects.filter(pk=user.id).update(experience=user_instance.experience + 10)
         data = json.loads(request.body)
-        Book.objects.filter(user__pk=user_id, pk=data["book"].id).delete()
+        Book.objects.filter(user__pk=user_id, pk=int(data["book_id"])).delete()
         
         return Response("Successfully completed the book for the user.", status=200)
 

@@ -26,12 +26,15 @@ const Login = () => {
     }),
     onSubmit: async values => {
       await authServices.login({ ...values }, (credentials, data) => {
+        console.log(credentials, data)
         localStorage.setItem("email", credentials.email)
         localStorage.setItem("token", data.token)
         localStorage.setItem("id", data.id)
+        localStorage.setItem("experience", data.user.experience)
         
         console.log(localStorage.getItem("email"))
         console.log(localStorage.getItem("token"))
+        console.log(localStorage.getItem("experience"))
         console.log(localStorage.getItem("id"))
 
         auth.login(credentials.email, () => {})

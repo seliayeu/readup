@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { Button, Card, Grid, Dialog, DialogActions, DialogTitle, DialogContentText, DialogContent, Stack, TextField, useMediaQuery, Typography } from "@mui/material";
-import LinearProgress, { LinearProgressProps } from '@mui/material/LinearProgress';
+import LinearProgres, { LinearProgressProps } from '@mui/material/LinearProgress';
 import AddIcon from '@mui/icons-material/Add';
 import { Box } from "@mui/system";
 import goalsService from "../../services/goalsService"
@@ -50,6 +50,19 @@ const Home = () => {
     handleClose();
   }
 
+  const markCompletedBook = async (id) => {
+    // const createBook = async (bookId, userId, token, newBook, callback) => {
+    await userService.finishBookUser(auth.user.id, auth.user.token, id,
+      (data) => {
+        setBooks(books.filter(b => b.id !== id))
+        localStorage.setItem("experience", parseInt(localStorage.getItem("experience")) + 10)
+        setViewBookOpen(false);
+      }
+    );
+    setCurrISBN("");
+    handleClose();
+  }
+
   const handleRemoveBook = (id) => {
     booksService.deleteBook(id, localStorage.getItem("id"), auth.user.token, () => {})
     setBooks(books.filter(b => b.id !== id))
@@ -86,17 +99,21 @@ const Home = () => {
       </Dialog>
       <Dialog fullWidth open={viewBookOpen} onClose={()=>{setViewBookOpen(false)}} sx={{position: "absolute" }}>
         <DialogTitle>{viewBook.title}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Enter book ISBN to add a book!</DialogContentText>
-        </DialogContent>
         <DialogActions>
           <Button onClick={()=>{setViewBookOpen(false)}}>Cancel</Button>
+          <Button onClick={() => {markCompletedBook(viewBook.id)}}>Mark Completed</Button>
           <Button onClick={() => {handleRemoveBook(viewBook.id)}}>Delete</Button>
         </DialogActions>
       </Dialog>
 
       <Box sx={{width: "90%", maxWidth: "700px", marginTop: "2%"}}>
-      <h1>readup</h1>
+      <Box sx={{ width: "100%", display: "flex", flexDirection: "row" }}>
+        <h1>readup</h1> 
+        <Box sx={{ width: "70%" }} mt="4.6vh" ml="1vw" >
+          <LinearProgres value={localStorage.getItem("experience") % 100} variant="determinate" />
+        </Box>
+        <Typography mt="3.7vh" ml="1vw">{Math.floor(localStorage.getItem("experience") / 100)}</Typography>
+      </Box>
       <Grid 
         sx={{ width: "100%", minHeight: "18vh", backgroundColor: "lightgrey", borderRadius: "8px", display: "flex", flexDirection: "row", flexGrow: 1}} 
         p={"2%"}
@@ -128,30 +145,9 @@ const Home = () => {
                 :
                 <Typography>{book.title.substring(0, 4) + "..."}</Typography>
             }
-            {/* <button onClick={() => handleRemoveBook(book.id)}>
-              delete
-            </button> */}
         </Card></Grid>)
         }
       </Grid>
-      <div>
-        {goals.map(goal =>
-          <div key={`${goal.id}`}>
-            books {goal.goal}/{goal.count}  
-            <button onClick={() => {
-              goalsService.deleteGoal(goal.id, localStorage.getItem("id"), localStorage.getItem("token"), () => {
-                console.log(goals)
-                console.log(goals.filter(g => g.id !== goal.id))
-                setGoals(goals.filter(g => g.id !== goal.id))
-              })
-            }}>
-              delete
-            </button>
-          </div>
-        )
-        }
-      </div>
-
       </Box>
     </Box>     
   )
